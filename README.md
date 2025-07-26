@@ -32,7 +32,7 @@ Este repositório é um ponto de partida robusto e moderno para iniciar novas ap
     ```bash
     git clone https://github.com/GabrielCezario1/App-api.git
     ```
-    *Siga as instruções no README do backend para executá-lo. A API precisa estar rodando em `https://localhost:7111`.*
+    *Siga as instruções no README do backend para executá-lo. A API precisa estar rodando em `https://localhost:5000`.*
 
 2.  **Clone este Repositório (Frontend):**
     ```bash
