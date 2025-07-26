@@ -9,7 +9,7 @@ import { UsuariosEditarRequest } from '../shared/models/usuarios/usuarios-editar
   providedIn: 'root'
 })
 export class UsuariosService {
-  private apiUrl = 'https://localhost:7111/api/usuarios';
+  private apiUrl = 'https://localhost:5000/api/usuarios';
 
   constructor(private http: HttpClient) { }
 
