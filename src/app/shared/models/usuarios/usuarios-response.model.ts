@@ -1,6 +1,6 @@
 export interface UsuariosResponse {
-  Id: number;
-  Nome?: string;
-  Email?: string;
-  DataCriacao: Date;
+  id: number;
+  nome?: string;
+  email?: string;
+  dataCriacao: Date;
 }

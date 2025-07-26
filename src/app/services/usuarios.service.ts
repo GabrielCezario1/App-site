@@ -9,11 +9,12 @@ import { UsuariosEditarRequest } from '../shared/models/usuarios/usuarios-editar
   providedIn: 'root'
 })
 export class UsuariosService {
-  private apiUrl = 'https://localhost:7111/api/usuarios'; // Definir a URL base da API
+  private apiUrl = 'https://localhost:7111/api/usuarios';
 
   constructor(private http: HttpClient) { }
 
   inserir(request: UsuariosInserirRequest): Observable<UsuariosResponse> {
+    console.log('Inserindo usuário:', request);
     return this.http.post<UsuariosResponse>(this.apiUrl, request);
   }
 

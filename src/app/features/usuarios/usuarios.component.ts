@@ -1,36 +1,44 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { UsuariosService } from '../../services/usuarios.service';
 import { UsuariosResponse } from '../../shared/models/usuarios/usuarios-response.model';
-import { UsuariosInserirRequest } from '../../shared/models/usuarios/usuarios-inserir-request.model';
-import { UsuariosEditarRequest } from '../../shared/models/usuarios/usuarios-editar-request.model';
 import { SharedModule } from '../../shared/shared.module';
+import { ToastrService } from 'ngx-toastr';
+import { UsuariosEditarRequest } from '../../shared/models/usuarios/usuarios-editar-request.model';
 
 @Component({
   selector: 'app-usuarios',
   standalone: true,
-  imports: [CommonModule, FormsModule, SharedModule],
+  imports: [CommonModule, ReactiveFormsModule, SharedModule],
   templateUrl: './usuarios.component.html'
 })
 export class UsuariosComponent implements OnInit {
   usuarios: UsuariosResponse[] = [];
-  usuarioSelecionado: UsuariosResponse | null = null;
-  novoUsuario: UsuariosInserirRequest = {};
-  editandoUsuario: UsuariosEditarRequest = {};
+  editarUsuarioRequest: UsuariosEditarRequest = {};
+  usuarioForm: FormGroup;
   modoEdicao: boolean = false;
-  currentFormUser: any = {}; // Objeto temporário para o formulário
 
-  // Propriedades para paginação
   paginaCorrente: number = 1;
   itensPorPagina: number = 10;
   totalRegistros: number = 0;
 
-  constructor(private usuariosService: UsuariosService) { }
+  constructor(
+    private usuariosService: UsuariosService,
+    private fb: FormBuilder,
+    private toastr: ToastrService
+  ) {
+    this.usuarioForm = this.fb.group({
+      id: [null],
+      nome: ['', [Validators.required]],
+      email: ['', [Validators.required, Validators.email]],
+      senha: ['', [Validators.required, Validators.minLength(6)]]
+    });
+  }
 
   ngOnInit(): void {
     this.listarUsuarios();
-    this.resetForm();
+    
   }
 
   listarUsuarios(): void {
@@ -39,75 +47,84 @@ export class UsuariosComponent implements OnInit {
         this.usuarios = data;
         this.totalRegistros = data.length;
       },
-      error: (err) => {
-        console.error('Erro ao listar usuários:', err);
+      error: () => {
+        this.toastr.error('Erro ao carregar a lista de usuários.');
       }
     });
   }
 
   selecionarUsuario(usuario: UsuariosResponse): void {
-    this.usuarioSelecionado = usuario;
-    this.currentFormUser = { ...usuario }; // Copia para edição
     this.modoEdicao = true;
+    this.usuarioForm.patchValue(usuario);
+    this.usuarioForm.get('senha')?.clearValidators();
+    this.usuarioForm.get('senha')?.updateValueAndValidity();
+    this.usuarioForm.get('senha')?.disable();
   }
 
-  resetForm(): void {
-    this.usuarioSelecionado = null;
-    this.novoUsuario = {};
-    this.editandoUsuario = {};
-    this.currentFormUser = {};
+  cancelarEdicao(): void {
     this.modoEdicao = false;
+    this.usuarioForm.reset();
+    this.usuarioForm.get('senha')?.setValidators([Validators.required, Validators.minLength(6)]);
+    this.usuarioForm.get('senha')?.updateValueAndValidity();
+    this.usuarioForm.get('senha')?.enable();
   }
 
-  inserirUsuario(): void {
-    this.novoUsuario = { ...this.currentFormUser }; // Copia do form para o objeto de inserção
-    this.usuariosService.inserir(this.novoUsuario).subscribe({
-      next: (data) => {
-        console.log('Usuário inserido:', data);
-        this.listarUsuarios();
-        this.resetForm();
-      },
-      error: (err) => {
-        console.error('Erro ao inserir usuário:', err);
-      }
-    });
-  }
+  onSubmit(): void {
+    if (this.usuarioForm.invalid) {
+      this.toastr.warning('Por favor, preencha o formulário corretamente.');
+      Object.values(this.usuarioForm.controls).forEach(control => {
+        control.markAsTouched();
+      });
+      return;
+    }
 
-  editarUsuario(): void {
-    this.editandoUsuario = { ...this.currentFormUser }; // Copia do form para o objeto de edição
-    this.usuariosService.editar(this.editandoUsuario).subscribe({
-      next: (data) => {
-        console.log('Usuário editado:', data);
-        this.listarUsuarios();
-        this.resetForm();
-      },
-      error: (err) => {
-        console.error('Erro ao editar usuário:', err);
-      }
-    });
+    const formValue = this.usuarioForm.value;
+
+    if (this.modoEdicao) {
+      this.editarUsuarioRequest = formValue;
+      console.log(this.editarUsuarioRequest);
+      this.usuariosService.editar(this.editarUsuarioRequest).subscribe({
+        next: () => {
+          this.toastr.success('Usuário editado com sucesso!');
+          this.listarUsuarios();
+          this.cancelarEdicao();
+        },
+        error: () => {
+          this.toastr.error('Erro ao editar o usuário.');
+        }
+      });
+    } else {
+      this.usuariosService.inserir(formValue).subscribe({
+        next: () => {
+          this.toastr.success('Usuário inserido com sucesso!');
+          this.listarUsuarios();
+          this.cancelarEdicao();
+        },
+        error: () => {
+          this.toastr.error('Erro ao inserir o usuário.');
+        }
+      });
+    }
   }
 
   excluirUsuario(id: number): void {
     if (confirm('Tem certeza que deseja excluir este usuário?')) {
       this.usuariosService.excluir(id).subscribe({
         next: () => {
-          alert('Usuário excluído com sucesso.');
+          this.toastr.success('Usuário excluído com sucesso.');
           this.listarUsuarios();
-          this.resetForm();
+          this.cancelarEdicao();
         },
-        error: (err) => {
-          console.error('Erro ao excluir usuário:', err);
+        error: () => {
+          this.toastr.error('Erro ao excluir o usuário.');
         }
       });
     }
   }
 
-  // Métodos de paginação
   onTrocarDePagina(event: any): void {
     this.paginaCorrente = event.page;
     this.itensPorPagina = event.itemsPerPage;
-    // Aqui você pode adicionar lógica para carregar dados da API com base na página e itens por página
-    // Por enquanto, a paginação será apenas visual na tabela.
   }
 
   getUsuariosPaginados(): UsuariosResponse[] {

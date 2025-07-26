@@ -1,6 +1,6 @@
 export interface UsuariosEditarRequest {
-  Id?: number;
-  Nome?: string;
-  Email?: string;
-  Senha?: string;
+  id?: number;
+  nome?: string;
+  email?: string;
+  senha?: string;
 }

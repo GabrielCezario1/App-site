@@ -1,37 +1,56 @@
 # Repositório Base para Projetos Angular
 
-Este repositório serve como um ponto de partida para novos projetos que utilizam Angular. Ele inclui uma estrutura de projeto organizada e funcionalidades essenciais prontas para uso.
+Este repositório é um ponto de partida robusto e moderno para iniciar novas aplicações com Angular. Ele foi cuidadosamente estruturado para seguir as melhores práticas de desenvolvimento, garantindo escalabilidade, manutenibilidade e uma excelente experiência para o desenvolvedor.
 
-## Funcionalidades Inclusas
+## Funcionalidades Implementadas
 
-O projeto base vem com as seguintes funcionalidades pré-configuradas:
+*   **CRUD de Usuários Completo:** Uma funcionalidade de gerenciamento de usuários totalmente implementada, incluindo criação, leitura, atualização e exclusão.
+*   **Sistema de Temas Híbrido:**
+    *   **Tema Escuro** na página de apresentação (Home).
+    *   **Tema Claro** na página de gerenciamento de usuários.
+*   **Componente de Paginação:** Um componente de UI reutilizável para a paginação de dados, demonstrado na lista de usuários.
+*   **Feedback ao Usuário:** Notificações claras e consistentes para todas as ações do usuário (sucesso, erro, confirmação) utilizando `ngx-toastr`.
 
-*   **Página de Início (Home):** Uma página inicial simples para apresentar a aplicação.
-*   **Gerenciamento de Usuários (Usuarios):**
-    *   Listagem de usuários.
-    *   Componente de serviço (`usuarios.service.ts`) para interagir com uma API de usuários.
-    *   Modelos de dados para requisições e respostas (`usuarios-*.model.ts`).
-*   **Componente de Paginação (DsPaginacao):** Um componente de UI reutilizável para lidar com a paginação de dados.
-*   **Estrutura de Módulos:** O código é organizado em módulos `core`, `features` e `shared` para melhor manutenibilidade.
+## Padrões e Boas Práticas
 
-## Configuração da API
+*   **Arquitetura com Standalone Components:** Utiliza a abordagem moderna de componentes independentes do Angular, simplificando o gerenciamento de dependências.
+*   **Formulários Reativos (Reactive Forms):** A funcionalidade de CRUD de usuários foi implementada com Formulários Reativos, centralizando a lógica de validação e controle no componente TypeScript para maior robustez e testabilidade.
+*   **Serviço de API Centralizado:** A comunicação com o backend é abstraída em um serviço (`UsuariosService`), mantendo os componentes limpos e focados na interface.
+*   **Validação Avançada:** Implementação de validação em tempo real, mensagens de erro contextuais e controle de estado do formulário (ex: desabilitar campos e botões condicionalmente).
 
-O projeto está pré-configurado para se comunicar com uma API local através do `UsuariosService`.
+## Tecnologias Utilizadas
 
-*   **URL Base da API:** `https://localhost:7111/api/usuarios`
+*   **Angular 19**
+*   **TypeScript**
+*   **Bootstrap 5 & Bootstrap Icons**
+*   **SCSS** para estilização avançada
+*   **ngx-toastr** para notificações e feedback ao usuário
 
-*   **Endpoints Disponíveis:**
-    *   `POST /` - Inserir um novo usuário.
-    *   `GET /` - Listar todos os usuários.
-    *   `GET /{id}` - Recuperar um usuário por ID.
-    *   `PUT /` - Editar um usuário existente.
-    *   `DELETE /{id}` - Excluir um usuário por ID.
+## Como Executar o Projeto
 
-## Como Usar
+1.  **Clone o Repositório do Backend:**
+    ```bash
+    git clone https://github.com/GabrielCezario1/App-api.git
+    ```
+    *Siga as instruções no README do backend para executá-lo. A API precisa estar rodando em `https://localhost:7111`.*
 
-1.  Clone este repositório.
-2.  Instale as dependências com `npm install`.
-3.  Inicie o servidor de desenvolvimento com `ng serve`.
-4.  Comece a construir seu projeto a partir desta base.
+2.  **Clone este Repositório (Frontend):**
+    ```bash
+    git clone <URL_DESTE_REPOSITORIO>
+    ```
 
-## link do repositório do Back end: https://github.com/GabrielCezario1/App-api.git
+3.  **Instale as Dependências:**
+    ```bash
+    npm install
+    ```
+
+4.  **Inicie o Servidor de Desenvolvimento:**
+    ```bash
+    ng serve
+    ```
+
+5.  Abra seu navegador e acesse `http://localhost:4200/`.
+
+---
+
+*Link para o repositório do Backend: [App-api](https://github.com/GabrielCezario1/App-api.git)*

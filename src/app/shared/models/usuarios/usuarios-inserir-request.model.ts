@@ -1,5 +1,5 @@
 export interface UsuariosInserirRequest {
-  Nome?: string;
-  Email?: string;
-  Senha?: string;
+  nome?: string;
+  email?: string;
+  senha?: string;
 }
